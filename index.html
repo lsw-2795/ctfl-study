@@ -588,7 +588,8 @@ function startWeak() {
 // 실전 난이도 문제를 먼저, 그중에서도 모의고사에 안 나온 문제를 먼저 뽑는다. 모자라면 기본 문제로 채운다.
 function buildMock() {
   const seen = new Set(S.mockSeen); const ids = [];
-  const rank = q => (q.hard ? 0 : 2) + (seen.has(q.id) ? 1 : 0) + Math.random() * 0.5;
+  // 연습에서 이미 푼 문제도 모의고사에 나온 문제처럼 뒤로 미룬다(미리 본 문제로 점수가 부풀지 않게)
+  const rank = q => (q.hard ? 0 : 2) + (seen.has(q.id) || S.q[q.id] ? 1 : 0) + Math.random() * 0.5;
   const take = (pool, n) => pool.filter(q => !ids.includes(q.id)).map(q => ({ q, r: rank(q) })).sort((a, b) => a.r - b.r).slice(0, n).map(x => x.q);
   for (const [los, n] of BP) {
     const avail = los.filter(lo => QS.some(q => q.lo === lo));
